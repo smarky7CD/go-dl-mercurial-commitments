@@ -12,22 +12,22 @@ func TestHardCommit(t *testing.T) {
 	var pi0, pi1 ristretto.Scalar
 
 	x = "sam"
-	h := generatePublicParameters()
+	h := GeneratePublicParameters()
 
 	pi0.Rand()
 	pi1.Rand()
 
 	// generate hard commitment for "sam"
-	c0, c1 := hardCommit(&h, []byte(x), &pi0, &pi1)
+	c0, c1 := HardCommit(&h, []byte(x), &pi0, &pi1)
 
 	// check Hard tease
-	tau := hardTease(&pi0)
-	checkTease := verTease(&c0, &c1, []byte(x), &tau)
-	assert.True(t, checkTease, "Tease should be true.")
+	tau := HardTease(&pi0)
+	checktease := VerTease(&c0, &c1, []byte(x), &tau)
+	assert.True(t, checktease, "Tease should be true.")
 
 	// check Open
-	checkOpen := verOpen(&h, &c0, &c1, []byte("sam"), &pi0, &pi1)
-	assert.True(t, checkOpen, "v0 hould be true.")
+	checkopen := VerOpen(&h, &c0, &c1, []byte("sam"), &pi0, &pi1)
+	assert.True(t, checkopen, "v0 hould be true.")
 }
 
 func TestBadHardCommit(t *testing.T) {
@@ -35,21 +35,21 @@ func TestBadHardCommit(t *testing.T) {
 	var pi0, pi1 ristretto.Scalar
 
 	x = "sam"
-	h := generatePublicParameters()
+	h := GeneratePublicParameters()
 
 	pi0.Rand()
 	pi1.Rand()
 
 	// generate hard commitment for "sam"
-	c0, c1 := hardCommit(&h, []byte(x), &pi0, &pi1)
+	c0, c1 := HardCommit(&h, []byte(x), &pi0, &pi1)
 
 	// check Hard tease
-	tau := hardTease(&pi0)
-	checkTease := verTease(&c0, &c1, []byte("jack"), &tau)
+	tau := HardTease(&pi0)
+	checkTease := VerTease(&c0, &c1, []byte("jack"), &tau)
 	assert.False(t, checkTease, "Tease should be false.")
 
 	// check Open
-	checkOpen := verOpen(&h, &c0, &c1, []byte("jack"), &pi0, &pi1)
+	checkOpen := VerOpen(&h, &c0, &c1, []byte("jack"), &pi0, &pi1)
 	assert.False(t, checkOpen, "checkOpen should be false.")
 }
 
@@ -63,10 +63,10 @@ func TestSoftCommit(t *testing.T) {
 	pi1.Rand()
 
 	// generate hard commitment for "sam"
-	c0, c1 := softCommit(&pi0, &pi1)
+	c0, c1 := SoftCommit(&pi0, &pi1)
 
 	// check soft tease
-	tau := softTease([]byte(x), &pi0, &pi1)
-	checkTease := verTease(&c0, &c1, []byte("jack"), &tau)
-	assert.True(t, checkTease, "Tease should be true.")
+	tau := SoftTease([]byte(x), &pi0, &pi1)
+	checktease := VerTease(&c0, &c1, []byte("jack"), &tau)
+	assert.True(t, checktease, "Tease should be true.")
 }

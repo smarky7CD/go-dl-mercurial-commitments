@@ -11,7 +11,7 @@ var n25519, _ = new(big.Int).SetString("7237005577332262213973186563042994240857
 
 // g is Edwards25519 basepoint
 // h (returned here) is a randomly selected point
-func generatePublicParameters() ristretto.Point {
+func GeneratePublicParameters() ristretto.Point {
 	var random ristretto.Scalar
 	var h ristretto.Point
 	random.Rand()
@@ -19,11 +19,11 @@ func generatePublicParameters() ristretto.Point {
 	return h
 }
 
-func hardCommit(h *ristretto.Point, x []byte, r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Point, ristretto.Point) {
+func HardCommit(h *ristretto.Point, x []byte, r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Point, ristretto.Point) {
 	var c0, t01, t02, t03, c1 ristretto.Point
-	var xScalar ristretto.Scalar
-	xScalar.Derive(x)
-	t01.ScalarMultBase(&xScalar)
+	var xscalar ristretto.Scalar
+	xscalar.Derive(x)
+	t01.ScalarMultBase(&xscalar)
 	t02.ScalarMult(h, r1)
 	t03.ScalarMult(&t02, r0)
 	c0.Add(&t01, &t03)
@@ -31,49 +31,49 @@ func hardCommit(h *ristretto.Point, x []byte, r0 *ristretto.Scalar, r1 *ristrett
 	return c0, c1
 }
 
-func softCommit(r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Point, ristretto.Point) {
+func SoftCommit(r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Point, ristretto.Point) {
 	var c0, c1 ristretto.Point
 	c0.ScalarMultBase(r0)
 	c1.ScalarMultBase(r1)
 	return c0, c1
 }
 
-func hardTease(r0 *ristretto.Scalar) ristretto.Scalar {
+func HardTease(r0 *ristretto.Scalar) ristretto.Scalar {
 	return *r0
 }
 
-func softTease(x []byte, r0 *ristretto.Scalar, r1 *ristretto.Scalar) ristretto.Scalar {
-	var t, xScalar, subR0X ristretto.Scalar
-	var tINT, modINTR1 big.Int
-	xScalar.Derive(x)
-	subR0X.Sub(r0, &xScalar)
-	modINTR1.ModInverse(r1.BigInt(), n25519)
-	tINT.Mul(subR0X.BigInt(), &modINTR1)
-	t.SetBigInt(&tINT)
+func SoftTease(x []byte, r0 *ristretto.Scalar, r1 *ristretto.Scalar) ristretto.Scalar {
+	var t, xscalar, subr0x ristretto.Scalar
+	var tint, modintr1 big.Int
+	xscalar.Derive(x)
+	subr0x.Sub(r0, &xscalar)
+	modintr1.ModInverse(r1.BigInt(), n25519)
+	tint.Mul(subr0x.BigInt(), &modintr1)
+	t.SetBigInt(&tint)
 	return t
 }
 
-func verTease(c0 *ristretto.Point, c1 *ristretto.Point, x []byte, tau *ristretto.Scalar) bool {
-	var cC, t0, t1 ristretto.Point
-	var xScalar ristretto.Scalar
-	xScalar.Derive(x)
-	t0.ScalarMultBase(&xScalar)
+func VerTease(c0 *ristretto.Point, c1 *ristretto.Point, x []byte, tau *ristretto.Scalar) bool {
+	var cc, t0, t1 ristretto.Point
+	var xscalar ristretto.Scalar
+	xscalar.Derive(x)
+	t0.ScalarMultBase(&xscalar)
 	t1.ScalarMult(c1, tau)
-	cC.Add(&t0, &t1)
-	return cC.Equals(c0)
+	cc.Add(&t0, &t1)
+	return cc.Equals(c0)
 }
 
-func open(r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Scalar, ristretto.Scalar) {
+func Open(r0 *ristretto.Scalar, r1 *ristretto.Scalar) (ristretto.Scalar, ristretto.Scalar) {
 	return *r0, *r1
 }
 
-func verOpen(h *ristretto.Point, c0 *ristretto.Point, c1 *ristretto.Point, x []byte, pi0 *ristretto.Scalar, pi1 *ristretto.Scalar) bool {
-	var cC0, t00, t01, cC1 ristretto.Point
-	var xScalar ristretto.Scalar
-	xScalar.Derive(x)
-	t00.ScalarMultBase(&xScalar)
+func VerOpen(h *ristretto.Point, c0 *ristretto.Point, c1 *ristretto.Point, x []byte, pi0 *ristretto.Scalar, pi1 *ristretto.Scalar) bool {
+	var cc0, t00, t01, cc1 ristretto.Point
+	var xscalar ristretto.Scalar
+	xscalar.Derive(x)
+	t00.ScalarMultBase(&xscalar)
 	t01.ScalarMult(c1, pi0)
-	cC0.Add(&t00, &t01)
-	cC1.ScalarMult(h, pi1)
-	return cC0.Equals(c0) && cC1.Equals(c1)
+	cc0.Add(&t00, &t01)
+	cc1.ScalarMult(h, pi1)
+	return cc0.Equals(c0) && cc1.Equals(c1)
 }
