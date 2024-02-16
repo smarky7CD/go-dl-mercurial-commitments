@@ -62,10 +62,10 @@ func TestSoftCommit(t *testing.T) {
 	pi0.Rand()
 	pi1.Rand()
 
-	// generate hard commitment for "sam"
+	// generate soft commitment for "·"
 	c0, c1 := SoftCommit(&pi0, &pi1)
 
-	// check soft tease
+	// check soft tease to "jack"
 	tau := SoftTease([]byte(x), &pi0, &pi1)
 	checktease := VerTease(&c0, &c1, []byte("jack"), &tau)
 	assert.True(t, checktease, "Tease should be true.")
