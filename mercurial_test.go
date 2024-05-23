@@ -20,14 +20,14 @@ func TestHardCommit(t *testing.T) {
 	// generate hard commitment for "sam"
 	c0, c1 := HardCommit(&h, []byte(x), &pi0, &pi1)
 
-	// check Hard tease
+	// check hard tease
 	tau := HardTease(&pi0)
-	checktease := VerTease(&c0, &c1, []byte(x), &tau)
-	assert.True(t, checktease, "Tease should be true.")
+	checkTease := VerTease(&c0, &c1, []byte(x), &tau)
+	assert.True(t, checkTease, "checkTease should be true.")
 
-	// check Open
+	// check open
 	checkopen := VerOpen(&h, &c0, &c1, []byte("sam"), &pi0, &pi1)
-	assert.True(t, checkopen, "v0 hould be true.")
+	assert.True(t, checkopen, "checkOpen should be true.")
 }
 
 func TestBadHardCommit(t *testing.T) {
@@ -43,21 +43,22 @@ func TestBadHardCommit(t *testing.T) {
 	// generate hard commitment for "sam"
 	c0, c1 := HardCommit(&h, []byte(x), &pi0, &pi1)
 
-	// check Hard tease
+	// check hard tease
 	tau := HardTease(&pi0)
 	checkTease := VerTease(&c0, &c1, []byte("jack"), &tau)
-	assert.False(t, checkTease, "Tease should be false.")
+	assert.False(t, checkTease, "checkTease should be false.")
 
-	// check Open
+	// check open
 	checkOpen := VerOpen(&h, &c0, &c1, []byte("jack"), &pi0, &pi1)
 	assert.False(t, checkOpen, "checkOpen should be false.")
 }
 
 func TestSoftCommit(t *testing.T) {
-	var x string
+	var x, y string
 	var pi0, pi1 ristretto.Scalar
 
-	x = "jack"
+	x = "sam"
+	y = "jack"
 
 	pi0.Rand()
 	pi1.Rand()
@@ -66,7 +67,11 @@ func TestSoftCommit(t *testing.T) {
 	c0, c1 := SoftCommit(&pi0, &pi1)
 
 	// check soft tease to "jack"
-	tau := SoftTease([]byte(x), &pi0, &pi1)
-	checktease := VerTease(&c0, &c1, []byte("jack"), &tau)
-	assert.True(t, checktease, "Tease should be true.")
+	tau := SoftTease([]byte(y), &pi0, &pi1)
+	checkTease := VerTease(&c0, &c1, []byte("jack"), &tau)
+	assert.True(t, checkTease, "checkTease should be true.")
+	// check soft tease to "sam"
+	tau = SoftTease([]byte(x), &pi0, &pi1)
+	checkTease = VerTease(&c0, &c1, []byte("sam"), &tau)
+	assert.True(t, checkTease, "checkTease should be true.")
 }
