@@ -21,31 +21,31 @@ import(
 
 func MCexample() {
 
-    var x,y string
+    	var x,y string
 	var pi0, pi1 ristretto.Scalar
 
-    // hard commitments
+    	// hard commitments
 
 	x = "sam"
-    y = "jack"
+    	y = "jack"
 	h := GeneratePublicParameters()
-    // generate hard commitment for "sam"
+    	// generate hard commitment for "sam"
 	c0, c1 := HardCommit(&h, []byte(x), &pi0, &pi1)
 
-    // valid tease and open
+    	// valid tease and open
 
 	// check hard tease
 	tau := HardTease(&pi0)
 	checktease := VerTease(&c0, &c1, []byte(x), &tau)
-    fmt.Println("Hard tease check is: ", checktease) //true
+    	fmt.Println("Hard tease check is: ", checktease) //true
 
 	// check open
 	checkopen := VerOpen(&h, &c0, &c1, []byte("sam"), &pi0, &pi1)
-    fmt.Println("Open check is: ", checkopen) //true
+    	fmt.Println("Open check is: ", checkopen) //true
 
-    // invalid tease and open
+    	// invalid tease and open
 
-    // check hard tease
+    	// check hard tease
 	tau = HardTease(&pi0)
 	checkTease = VerTease(&c0, &c1, []byte("jack"), &tau)
 	fmt.Println("Hard tease check is: ", checktease) //false
@@ -54,18 +54,18 @@ func MCexample() {
 	checkOpen = VerOpen(&h, &c0, &c1, []byte("jack"), &pi0, &pi1)
 	fmt.Println("Open check is: ", checkopen) //true //false
 
-    // soft commitments
-    // generate soft commitment for "·"
+    	// soft commitments
+    	// generate soft commitment for "·"
 	c0, c1 = SoftCommit(&pi0, &pi1)
 
 	// check soft tease to "jack"
 	tau = SoftTease([]byte(y), &pi0, &pi1)
 	checktease = VerTease(&c0, &c1, []byte("jack"), &tau)
-    fmt.Println("Soft tease check is: ", checktease) // true
-    // check soft tease for "sam"
+    	fmt.Println("Soft tease check is: ", checktease) // true
+    	// check soft tease for "sam"
 	tau = SoftTease([]byte(x), &pi0, &pi1)
 	checktease = VerTease(&c0, &c1, []byte("sam"), &tau)
-    fmt.Println("Soft tease check is: ", checktease) // true
+    	fmt.Println("Soft tease check is: ", checktease) // true
 }
 
 
